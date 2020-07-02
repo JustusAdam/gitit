@@ -42,6 +42,26 @@ Other features include
 Getting started
 ===============
 
+Using a prebuilt binary
+-----------------------------
+
+We use GitHub Actions to build pre-packaged binaries + assets of gitit. They are
+built on the latest MacOS and Ubuntu available on GitHub. This installation
+method is the easiest one, however it may not work on your machine if you have a
+different OS or OS version.
+
+We recommend trying a prebuilt package first, and should you encounter issues,
+try compiling it yourself.
+
+You can download the package for your platform [on the releases
+page](/releases). Simply unpack the archive (`tar -xf gitit-<platform>.tar.gz`)
+and run the `gitit` executable inside.
+
+*Note*: gitit will automatically create and use a `wikidata` folder in whatever
+directory is run. To configure this you can run the `gitit` executable from
+anywhere, but you **may not** move the executable from the folder unpacked from
+the archive.
+
 Compiling and installing gitit
 ------------------------------
 
@@ -184,7 +204,7 @@ support (see above), you can get highlighted source code by using
     ~~~ {.haskell .numberLines}
     qsort []     = []
     qsort (x:xs) = qsort (filter (< x) xs) ++ [x] ++
-                   qsort (filter (>= x) xs) 
+                   qsort (filter (>= x) xs)
     ~~~
 
 To see what languages your pandoc was compiled to highlight:
@@ -287,9 +307,9 @@ To change the footer, modify `templates/footer.st`.
 
 For more radical changes, you can override any of the default
 templates in `$CABALDIR/share/gitit-x.y.z/data/templates` by copying
-the file into `templates`, modifying it, and restarting gitit. The 
-`page.st` template is the master template; it includes the others. 
-Interpolated variables are surrounded by `$`s, so `literal $` must 
+the file into `templates`, modifying it, and restarting gitit. The
+`page.st` template is the master template; it includes the others.
+Interpolated variables are surrounded by `$`s, so `literal $` must
 be backslash-escaped.
 
 Adding support for math
@@ -484,21 +504,21 @@ loaded, and set up a virtual host with the following configuration:
         RewriteEngine On
         ProxyPreserveHost On
         ProxyRequests Off
-    
+
         <Proxy *>
            Order deny,allow
            Allow from all
         </Proxy>
-    
+
         ProxyPassReverse /    http://127.0.0.1:5001
         RewriteRule ^(.*) http://127.0.0.1:5001$1 [P]
-    
+
         ErrorLog /var/log/apache2/error.log
         LogLevel warn
-    
+
         CustomLog /var/log/apache2/access.log combined
         ServerSignature On
-    
+
     </VirtualHost>
 
 Reload your apache configuration and you should be all set.
@@ -626,4 +646,3 @@ Gitit's default visual layout is shamelessly borrowed from Wikipedia.
 The stylesheets are influenced by Wikipedia's stylesheets and by the
 bluetrip CSS framework (see BLUETRIP-LICENSE). Some of the icons in
 `img/icons` come from bluetrip as well.
-

@@ -8,6 +8,7 @@ env:
   PROGRAM: gitit
   EXTRA_ASSETS: plugins static templates data LICENSE YUI-LICENSE
   PROXY: unix-proxy.sh
+  HIDDEN_BIN: gitit-bin
 
 jobs:
   create-assets:
@@ -19,7 +20,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Cache programs and
+    - name: Cache build tools and libraries
       uses: actions/cache@v2
       env:
         cache-name: cache-tools-and-libraries

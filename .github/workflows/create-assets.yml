@@ -6,7 +6,7 @@ on:
 
 env:
   PROGRAM: gitit
-  EXTRA_ASSETS: plugins static templates data LICENSE YUI-LICENSE
+  EXTRA_ASSETS: plugins data LICENSE YUI-LICENSE
   PROXY: unix-proxy.sh
   HIDDEN_BIN: gitit-bin
 
@@ -19,18 +19,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-
-    - name: Cache build tools and libraries
-      uses: actions/cache@v2
-      env:
-        cache-name: cache-tools-and-libraries
-      with:
-        path: ~/.stack
-        key: ${{ runner.os }}-ca-${{ env.cache-name }}-${{ hashFiles('**/stack.yaml.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-ca-${{ env.cache-name }}-
-          ${{ runner.os }}-ca-
-          ${{ runner.os }}-
 
     - name: Build the project
       run: stack build --ghc-options=-rtsopts

@@ -41,10 +41,10 @@ jobs:
     - name: Tar and strip the binary
       run: |
         mv `stack exec -- which $PROGRAM` $HIDDEN_BIN
-        mv $PROXY $PROGRAM
         mkdir gitit
-        mv program.tar.gz $PROGRAM $HIDDEN_BIN $EXTRA_ASSETS gitit
-        tar -cavf gitit
+        mv $PROXY gitit/$PROGRAM
+        mv $HIDDEN_BIN $EXTRA_ASSETS gitit
+        tar -cavf program.tar.gz gitit
 
     - name: Upload assets
       id: upload-release-asset

@@ -6,6 +6,7 @@ on:
 
 env:
   PROGRAM: gitit
+  DIR: gitit
   EXTRA_ASSETS: plugins data LICENSE YUI-LICENSE
   PROXY: unix-proxy.sh
   HIDDEN_BIN: gitit-bin
@@ -28,7 +29,6 @@ jobs:
       # running the actual program
     - name: Tar and strip the binary
       run: |
-        export DIR=$PROGRAM
         mv `stack exec -- which $PROGRAM` $HIDDEN_BIN
         mkdir $DIR
         mv $PROXY $DIR/$PROGRAM

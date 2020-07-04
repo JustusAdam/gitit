@@ -7,7 +7,7 @@ on:
 env:
   PROGRAM: gitit
   DIR: gitit
-  EXTRA_ASSETS: plugins data LICENSE YUI-LICENSE
+  EXTRA_ASSETS: data LICENSE YUI-LICENSE
   PROXY: unix-proxy.sh
   HIDDEN_BIN: gitit-bin
 
@@ -16,24 +16,41 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
+        with-plugins: [yes, no]
 
     steps:
     - uses: actions/checkout@v2
 
     - name: Build the project
       run: stack build --ghc-options=-rtsopts
+      if: ${{ matrix.with-plugins }}
+
+    - name: Build the project, without plugins
+      run: stack build --ghc-options=-rtsopts --flag gitit:plugins
+      if: ${{ !matrix.with-plugins }}
 
       # This also renames the program name and instead injects a proxy shell
       # script that takes care of overriding the cabal inserted paths before
       # running the actual program
-    - name: Tar and strip the binary
+
+    - name: Prepare directory
       run: |
         mv `stack exec -- which $PROGRAM` $HIDDEN_BIN
         mkdir $DIR
         mv $PROXY $DIR/$PROGRAM
-        mv $HIDDEN_BIN $EXTRA_ASSETS $DIR
+
+    - name: Tar the directory
+      run: |
+        mv $HIDDEN_BIN $EXTRA_ASSETS plugins $DIR
         tar -cavf $DIR.tar.gz $DIR
+      if: ${{ matrix.with-plugins }}
+
+    - name: Tar the directory
+      run: |
+        mv $HIDDEN_BIN $EXTRA_ASSETS $DIR
+        tar -cavf program.tar.gz $DIR
+      if: ${{ !matrix.with-plugins }}
 
     - name: Upload assets
       id: upload-release-asset
@@ -45,3 +62,16 @@ jobs:
         asset_path: ./gitit.tar.gz
         asset_name: gitit-${{ runner.os }}.tar.gz
         asset_content_type: application/tar.gz
+      if: ${{ matrix.with-plugins }}
+
+    - name: Upload assets
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./gitit.tar.gz
+        asset_name: gitit-${{ runner.os }}-noplugins.tar.gz
+        asset_content_type: application/tar.gz
+      if: ${{ !matrix.with-plugins }}

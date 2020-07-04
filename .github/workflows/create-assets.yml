@@ -28,12 +28,12 @@ jobs:
       # running the actual program
     - name: Tar and strip the binary
       run: |
-        ls
+        export DIR=$PROGRAM
         mv `stack exec -- which $PROGRAM` $HIDDEN_BIN
-        mkdir gitit
-        mv $PROXY gitit/$PROGRAM
-        mv $HIDDEN_BIN $EXTRA_ASSETS gitit
-        tar -cavf program.tar.gz gitit
+        mkdir $DIR
+        mv $PROXY $DIR/$PROGRAM
+        mv $HIDDEN_BIN $EXTRA_ASSETS $DIR
+        tar -cavf $DIR.tar.gz $DIR
 
     - name: Upload assets
       id: upload-release-asset

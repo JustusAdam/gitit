@@ -32,7 +32,7 @@ jobs:
       run: mv `stack exec -- which $PROGRAM` the-binary
 
     - name: Build the project without plugins
-      run: stack build --ghc-options=-rtsopts --flags gitit:-plugins
+      run: stack build --ghc-options=-rtsopts --flag gitit:-plugins
 
     - name: Save the binary without plugins
       run: mv `stack exec -- which $PROGRAM` the-binary-noplugins

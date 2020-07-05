@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        with-plugins: [yes, no]
+        with-plugins: [true, false]
 
     steps:
     - uses: actions/checkout@v2

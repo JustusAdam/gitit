@@ -49,7 +49,7 @@ jobs:
     - name: Tar the directory
       run: |
         mv $HIDDEN_BIN $EXTRA_ASSETS $DIR
-        tar -cavf program.tar.gz $DIR
+        tar -cavf $DIR.tar.gz $DIR
       if: ${{ !matrix.with-plugins }}
 
     - name: Upload assets

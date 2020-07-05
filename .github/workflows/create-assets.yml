@@ -17,59 +17,65 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        with-plugins: [true, false]
 
     steps:
     - uses: actions/checkout@v2
 
     - name: Build the project
       run: stack build --ghc-options=-rtsopts
-      if: ${{ matrix.with-plugins }}
-
-    - name: Build the project, without plugins
-      run: stack build --ghc-options=-rtsopts --flag gitit:plugins
-      if: ${{ !matrix.with-plugins }}
 
       # This also renames the program name and instead injects a proxy shell
       # script that takes care of overriding the cabal inserted paths before
       # running the actual program
 
-    - name: Prepare directory
+    - name: Save the binary with plugins
+      run: mv `stack exec -- which $PROGRAM` the-binary
+
+    - name: Build the project without plugins
+      run: stack build --ghc-options=-rtsopts --flags gitit:-plugins
+
+    - name: Save the binary without plugins
+      run: mv `stack exec -- which $PROGRAM` the-binary-noplugins
+
+    - name: Prepare directory (no plugins)
       run: |
-        mv `stack exec -- which $PROGRAM` $HIDDEN_BIN
         mkdir $DIR
+        mv the-binary-noplugins $DIR/$HIDDEN_BIN
         mv $PROXY $DIR/$PROGRAM
+        mv $EXTRA_ASSETS $DIR
 
-    - name: Tar the directory
-      run: |
-        mv $HIDDEN_BIN $EXTRA_ASSETS plugins $DIR
-        tar -cavf $DIR.tar.gz $DIR
-      if: ${{ matrix.with-plugins }}
-
-    - name: Tar the directory
+    - name: Tar the directory (no plugins)
       run: |
         mv $HIDDEN_BIN $EXTRA_ASSETS $DIR
-        tar -cavf $DIR.tar.gz $DIR
-      if: ${{ !matrix.with-plugins }}
+        tar -cavf $DIR-noplugins.tar.gz $DIR
 
-    - name: Upload assets
+
+    - name: Prepare directory (with plugins)
+      run: |
+        mv the-binary $DIR/$HIDDEN_BIN
+        mv plugins $DIR
+
+
+    - name: Tar the directory (with plugins)
+      run: |
+        tar -cavf $DIR.tar.gz $DIR
+
+    - name: Upload artifact with plugins
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./gitit.tar.gz
+        asset_path: ./${{ env.DIR }}.tar.gz
         asset_name: gitit-${{ runner.os }}.tar.gz
         asset_content_type: application/tar.gz
-      if: ${{ matrix.with-plugins }}
 
-    - name: Upload assets
+    - name: Upload artifact without plugins
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./gitit.tar.gz
+        asset_path: ./${{ env.DIR }}-noplugins.tar.gz
         asset_name: gitit-${{ runner.os }}-noplugins.tar.gz
         asset_content_type: application/tar.gz
-      if: ${{ !matrix.with-plugins }}

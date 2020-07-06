@@ -46,7 +46,6 @@ jobs:
 
     - name: Tar the directory (no plugins)
       run: |
-        mv $HIDDEN_BIN $EXTRA_ASSETS $DIR
         tar -cavf $DIR-noplugins.tar.gz $DIR
 
 

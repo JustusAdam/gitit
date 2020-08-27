@@ -53,6 +53,9 @@ different OS or OS version.
 We recommend trying a prebuilt package first, and should you encounter issues,
 try compiling it yourself.
 
+On Debain and Ubuntu you'll need to first install the `libtinfo5` package with
+`sudo apt install libtinfo5`.
+
 You can download the package for your platform [on the releases
 page](/releases). Simply unpack the archive (`tar -xf gitit-<platform>.tar.gz`)
 and run the `gitit` executable inside.

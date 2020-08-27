@@ -41,6 +41,7 @@ jobs:
       run: |
         mkdir $DIR
         mv the-binary-noplugins $DIR/$HIDDEN_BIN
+        stack runhaskell -- CopyAssets.hs filestore
         mv $PROXY $DIR/$PROGRAM
         mv $EXTRA_ASSETS $DIR
 

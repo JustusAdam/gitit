@@ -9,5 +9,6 @@
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
 export gitit_datadir=$SCRIPTPATH
+export filestore_datadir=$SCRIPTPATH/vendor-data/filestore
 
 exec $SCRIPTPATH/gitit-bin "$@"
